@@ -1,0 +1,13 @@
+.idea/
+target/
+bin/
+*.log
+data/
+log/
+.terraform/
+dependency-reduced-pom.xml
+node_modules/
+solc-contract/
+contract/build/PublicationRegistry.abi
+contract/build/PublicationRegistry.bin
+.env

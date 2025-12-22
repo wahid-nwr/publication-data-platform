@@ -1,0 +1,22 @@
+{
+  "type": "record",
+  "name": "AuthorReadyEvent",
+  "namespace": "com.publication.events",
+  "fields": [
+    {
+      "name": "author",
+      "type": {
+        "type": "record",
+        "name": "Author",
+        "fields": [
+          { "name": "id", "type": "long" },
+          { "name": "email", "type": "string" },
+          { "name": "firstName", "type": "string" },
+          { "name": "lastName", "type": "string" }
+        ]
+      }
+    },
+    { "name": "eventType", "type": "string" },
+    { "name": "occurredAt", "type": "long" }
+    ]
+}

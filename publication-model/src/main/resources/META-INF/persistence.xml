@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_1.xsd"
+             version="3.1">
+    <!--<persistence-unit name="optimizely-unit" transaction-type="JTA">-->
+    <persistence-unit name="optimizely-unit" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <class>io.wahid.publication.model.Author</class>
+        <class>io.wahid.publication.model.Book</class>
+        <class>io.wahid.publication.model.Magazine</class>
+        <class>io.wahid.publication.model.PublicationModel</class>
+        <class>io.wahid.publication.model.events.PendingPublication</class>
+        <class>io.wahid.publication.model.web3.PublicationTransaction</class>
+
+        <properties>
+            <!--<property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:tcp://h2db:1521/publication-db;MODE=MySQL;DB_CLOSE_DELAY=-1;CACHE_SIZE=65536;LOCK_MODE=0"/>
+            <property name="jakarta.persistence.jdbc.user" value="wa"/>
+            <property name="jakarta.persistence.jdbc.password" value="an"/>-->
+            <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
+            <!--<property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://10.128.0.2:5432/publication-db"/>-->
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://pubdb:5432/publication-db"/>
+            <property name="jakarta.persistence.jdbc.user" value="wahid"/>
+            <property name="jakarta.persistence.jdbc.password" value="anwar"/>
+            <property name="hibernate.transaction.jta.platform" value="auto"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <property name="hibernate.hbm2ddl.create_namespaces" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.connection.autocommit" value="false"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.enable_lazy_load_no_trans" value="true"/>
+            <property name="hibernate.jdbc.batch_size" value="30"/>
+            <property name="hibernate.generate_statistics" value="true"/>
+            <property name="hibernate.order_inserts" value="true"/>
+            <property name="hibernate.order_updates" value="true"/>
+            <property name="hibernate.jdbc.batch_versioned_data" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.use_sql_comments" value="false"/>
+            <property name="hibernate.discriminator.ignore_explicit_for_joined" value="false"/>
+            <property name="hibernate.id.sequence.increment_size_mismatch_strategy" value="FIX"/>
+
+            <!--<property name="hibernate.transaction.jta.platform"
+                      value="org.hibernate.service.jta.platform.internal.JBossStandAloneJtaPlatform" />-->
+            <!--<property name="hibernate.transaction.jta.platform"
+                      value="org.hibernate.engine.transaction.jta.platform.internal.AtomikosJtaPlatform"/>-->
+            <!-- Ensure local (not JTA) transactions -->
+            <!--<property name="hibernate.transaction.coordinator_class" value="jdbc"/>
+            <property name="hibernate.current_session_context_class" value="thread"/>-->
+        </properties>
+    </persistence-unit>
+</persistence>

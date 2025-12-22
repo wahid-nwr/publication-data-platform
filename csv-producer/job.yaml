@@ -1,0 +1,62 @@
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  annotations:
+    run.googleapis.com/creator: anwar.wahid.1686@gmail.com
+    run.googleapis.com/lastModifier: anwar.wahid.1686@gmail.com
+  labels:
+    cloud.googleapis.com/location: us-central1
+    run.googleapis.com/lastUpdatedTime: '2025-11-25T13:23:21.181873Z'
+  name: csv-producer-job
+  namespace: '652346505611'
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/client-name: gcloud
+        run.googleapis.com/client-version: 544.0.0
+        run.googleapis.com/execution-environment: gen2
+        run.googleapis.com/vpc-access-connector: projects/alert-cursor-476219-s1/locations/us-central1/connectors/run-connector
+        run.googleapis.com/vpc-access-egress: all
+    spec:
+      taskCount: 1
+      template:
+        spec:
+          containers:
+          - env:
+            - name: AUTHOR_CSV_PATH
+              value: gs://publication-csv-bucket/autoren.csv
+            - name: AUTHOR_CSV_CHARSET
+              value: ISO_8859_1
+            - name: BOOK_CSV_PATH
+              value: gs://publication-csv-bucket/buecher.csv
+            - name: BOOK_CSV_CHARSET
+              value: windows-1252
+            - name: MAGAZINE_CSV_PATH
+              value: gs://publication-csv-bucket/zeitschriften.csv
+            - name: MAGAZINE_CSV_CHARSET
+              value: ISO_8859_1
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: publication.lkc-vooyxj.us-west1.gcp.confluent.cloud:9092
+            - name: KAFKA_SCHEMA_REGISTRY
+              value: publication.lkc-vooyxj.us-west1.gcp.confluent.cloud:443
+            - name: KAFKA_SECURITY_PROTOCOL
+              value: SASL_SSL
+            - name: KAFKA_SASL_MECHANISM
+              value: PLAIN
+            - name: KAFKA_SASL_JAAS_CONFIG
+              value: org.apache.kafka.common.security.plain.PlainLoginModule required
+                username='DRVLONONKVQ46SJK' password='cfltRl737pTCUGonN6hUMpR8+a5uKaVRxUnNjf8F538KPAKRZpB8TnA/QxWej6Cg';
+            - name: LOG_LEVEL
+              value: ERROR
+            - name: FROM_VOLUME
+              value: 'false'
+            image: us-central1-docker.pkg.dev/alert-cursor-476219-s1/cloud-run-source-deploy/csv-producer-job@sha256:eb566e23cae9c5c20a6603ea9804bb2a8ff8c20c57ff05351e56fc6ab1a5d9ca
+            name: csv-producer-job-1
+            resources:
+              limits:
+                cpu: 1000m
+                memory: 1Gi
+          maxRetries: 1
+          serviceAccountName: 652346505611-compute@developer.gserviceaccount.com
+          timeoutSeconds: '600'

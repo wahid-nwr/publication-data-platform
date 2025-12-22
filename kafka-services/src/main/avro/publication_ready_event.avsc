@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "namespace": "com.publication.events",
+  "name": "PublicationReadyEvent",
+  "fields": [
+    { "name": "publicationId", "type": "string" },
+    { "name": "type", "type": "string" },
+    { "name": "title", "type": "string" },
+    { "name": "isbn", "type": "string" },
+    { "name": "authorEmails", "type": { "type": "array", "items": "string" } },
+    { "name": "description", "type": ["null", "string"], "default": null },
+    { "name": "publicationDate", "type": { "type": "array", "items": "int" } },
+    { "name": "occurredAt", "type": "double" },
+    { "name": "occurredAtLong", "type": "long", "default": 0 },
+    { "name": "eventType", "type": "string" }
+  ]
+}

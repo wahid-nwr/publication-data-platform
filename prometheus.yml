@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'publication-app'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: [ 'pubstack_app:9494' ]
+
+#  - job_name: 'docker'
+#    static_configs:
+#      - targets: ['localhost:9323']
+#
+#  - job_name: 'prometheus'
+#    static_configs:
+#      - targets: ['prometheus:9090']

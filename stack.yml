@@ -1,0 +1,121 @@
+version: "3.8"
+
+volumes:
+  kafka_data:
+  db_data:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+  publication_db_data:
+  logs_data:
+  csv_data:
+
+networks:
+  publication-net:
+    external: true
+
+configs:
+  fluentd_conf:
+    file: ./fluent.conf
+
+services:
+  # Fluentd log collector service
+  fluentd:
+    image: fluent/fluentd:latest # Or a specific tag like fluent/fluentd-kubernetes-daemonset:v1.7.3-debian-cloudwatch-1.0
+    ports:
+      - "24224:24224" # Fluentd forward input port
+    volumes:
+      - ./fluent.conf:/fluentd/etc/fluentd.conf # Mount your config file
+      - /var/log/fluentd:/fluentd/log # Persistent storage for Fluentd logs
+    deploy:
+      mode: global # Run Fluentd on every node
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  csv-producer:
+    image: us-central1-docker.pkg.dev/alert-cursor-476219-s1/publication-repo/csv-producer:latest
+    networks:
+      - publication-net
+    command: [ "--log.level=error", "--log.format=json" ]
+    ports:
+      - "8082:8082"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.6'
+          memory: 512M
+        reservations:
+          cpus: '0.3'
+          memory: 128M
+      restart_policy:
+        condition: on-failure
+        delay: 10s
+        max_attempts: 10
+        window: 120s
+    environment:
+      PORT: "8082"
+      AUTHOR_CSV_PATH: "/csv/data/autoren.csv"
+      AUTHOR_CSV_CHARSET: "ISO_8859_1"
+      BOOK_CSV_PATH: "/csv/data/buecher.csv"
+      BOOK_CSV_CHARSET: "windows-1252"
+      MAGAZINE_CSV_PATH: "/csv/data/zeitschriften.csv"
+      MAGAZINE_CSV_CHARSET: "ISO_8859_1"
+      fromVolume: "true"
+      KAFKA_BOOTSTRAP_SERVERS: "publication.lkc-vooyxj.us-west1.gcp.confluent.cloud:9092"
+      KAFKA_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule required username='DRVLONONKVQ46SJK' password='cfltRl737pTCUGonN6hUMpR8+a5uKaVRxUnNjf8F538KPAKRZpB8TnA/QxWej6Cg';"
+      KAFKA_SECURITY_PROTOCOL: SASL_SSL
+      KAFKA_SASL_MECHANISM: PLAIN
+      LOG_LEVEL: "ERROR"
+      KAFKA_SCHEMA_REGISTRY: "publication.lkc-vooyxj.us-west1.gcp.confluent.cloud:9092"
+    volumes:
+      # Absolute path for CSVs on publication vm
+      - /home/deploy/publication_data:/csv/data:ro
+      - logs_data:/producer/logs
+  app:
+    image: us-central1-docker.pkg.dev/alert-cursor-476219-s1/publication-repo/publication-common:latest
+    ports:
+      - target: 8081
+        published: 8081
+        protocol: tcp
+        mode: host
+      - target: 9494
+        published: 9494
+        protocol: tcp
+        mode: host
+    networks:
+      - publication-net
+    deploy:
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1024M
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8081/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+    environment:
+      WEB_PORT: "8081"
+      KAFKA_BOOTSTRAP_SERVERS: "pkc-lgk0v.us-west1.gcp.confluent.cloud:9092"
+      KAFKA_SASL_JAAS_CONFIG: "org.apache.kafka.common.security.plain.PlainLoginModule required username='DRVLONONKVQ46SJK' password='cfltRl737pTCUGonN6hUMpR8+a5uKaVRxUnNjf8F538KPAKRZpB8TnA/QxWej6Cg';"
+      KAFKA_SECURITY_PROTOCOL: SASL_SSL
+      KAFKA_SASL_MECHANISM: PLAIN
+      ZOOKEEPER_HOST: "zookeeper:2181"
+      LOG_LEVEL: "debug"
+      OTEL_SERVICE_NAME: publication-app
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://observability_grafana-alloy:4318
+      OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+      OTEL_RESOURCE_ATTRIBUTES: deployment.environment=local,service.version=1.0.0
+    volumes:
+      - publication_db_data:/app/data
+      - logs_data:/app/logs

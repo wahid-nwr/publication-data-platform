@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.wahid.publication</groupId>
+        <artifactId>PublicationManagement</artifactId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>kafka-services</artifactId>
+
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <name>Confluent Maven Repository</name>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.wahid.publication</groupId>
+            <artifactId>publication-model</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.wahid.publication</groupId>
+            <artifactId>publication-blockchain</artifactId>
+            <version>1.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/io.confluent/kafka-avro-serializer -->
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>8.1.0</version>
+        </dependency>
+
+        <!-- Avro -->
+        <dependency>
+            <groupId>org.apache.avro</groupId>
+            <artifactId>avro</artifactId>
+            <version>1.12.1</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <sourceDirectory>src/main/java</sourceDirectory>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro-maven-plugin</artifactId>
+                <version>1.12.1</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>schema</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirectory>${project.basedir}/src/main/avro</sourceDirectory>
+                            <outputDirectory>${project.build.directory}/generated-sources/avro</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

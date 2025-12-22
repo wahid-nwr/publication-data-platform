@@ -1,0 +1,29 @@
+{
+  "type": "record",
+  "namespace": "com.publication.events",
+  "name": "PublicationCreatedEvent",
+  "fields": [
+    {
+      "name": "pendingPublication",
+      "type": {
+        "type": "record",
+        "name": "PendingPublication",
+        "fields": [
+          { "name": "id", "type": "long" },
+          { "name": "title", "type": "string" },
+          { "name": "isbn", "type": "string" },
+          { "name": "type", "type": "string" },
+          { "name": "authorEmails", "type": { "type": "array", "items": "string" }},
+          { "name": "description", "type": ["null", "string"], "default": null },
+          { "name": "publicationDate", "type": { "type": "array", "items": "int" }},
+          { "name": "status", "type": "string" }
+        ]
+      }
+    },
+
+    { "name": "publicationId", "type": "string" },
+    { "name": "type", "type": "string" },
+    { "name": "occurredAt", "type": "long" },
+    { "name": "eventType", "type": "string" }
+  ]
+}

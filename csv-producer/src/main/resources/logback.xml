@@ -1,0 +1,23 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{ISO8601} %-5level [%thread] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Reduce Kafka client spam -->
+    <logger name="org.apache.kafka" level="ERROR"/>
+    <logger name="org.apache.kafka.clients" level="ERROR"/>
+    <logger name="org.apache.kafka.common.network" level="ERROR"/>
+
+    <!-- Reduce Confluent & Avro serializer logs -->
+    <logger name="io.confluent" level="ERROR"/>
+    <logger name="io.confluent.kafka.serializers" level="ERROR"/>
+    <logger name="io.confluent.kafka.schemaregistry" level="ERROR"/>
+
+    <!-- Reduce netty (TLS handshake debugging) -->
+    <logger name="io.netty" level="ERROR"/>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

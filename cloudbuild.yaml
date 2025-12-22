@@ -1,0 +1,58 @@
+#substitutions:
+#  _VM_USER: deploy
+
+steps:
+  # Step 1: Build the JAR
+  - name: maven:3.9.6-eclipse-temurin-21
+    entrypoint: mvn
+    args: [ 'clean', 'package', '-DskipTests' ]
+
+  # Step 2: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/publication-repo/publication-persister:latest', './publication-persister']
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', 'us-central1-docker.pkg.dev/$PROJECT_ID/publication-repo/csv-producer:latest', './csv-producer' ]
+
+  # Step 3: Push to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'us-central1-docker.pkg.dev/$PROJECT_ID/publication-repo/publication-persister:latest' ]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', 'us-central1-docker.pkg.dev/$PROJECT_ID/publication-repo/csv-producer:latest' ]
+
+#  - name: 'gcr.io/cloud-builders/gcloud'
+#    entrypoint: 'bash'
+#    args:
+#        - '-c'
+#        - |
+#          gcloud secrets versions access latest --secret=cloudbuild-ssh-key > /workspace/ssh/id_rsa
+#          chmod 400 /workspace/ssh/id_rsa
+#          # Optional: create known_hosts if not pre-existing
+#          ssh-keyscan -H 34.59.213.229 >> /workspace/ssh/known_hosts
+#    volumes:
+#        - name: 'ssh'
+#          path: '/workspace/ssh'
+#  # -----------------------------
+#  # Step 4: SSH into VM & deploy
+#  # -----------------------------
+#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#    entrypoint: 'bash'
+#    secretEnv: ['DEPLOY_KEY']
+#    args:
+#      - '-c'
+#      - |
+#        echo "===== RAW KEY CONTENT ====="
+#        sed -n '1,5p' /workspace/ssh/id_rsa
+#        echo "===== Attempt SSH ====="
+#        ssh -vvv -i "/workspace/ssh/id_rsa" -o UserKnownHostsFile=/workspace/ssh/known_hosts ${_VM_USER}@34.59.213.229 \
+#        'bash -s' < ./scripts/deploy-swarm.sh
+#    volumes:
+#      - name: 'ssh'
+#        path: '/workspace/ssh'
+#
+#availableSecrets:
+#  secretManager:
+#    - versionName: projects/652346505611/secrets/cloudbuild-ssh-key/versions/latest
+#      env: 'DEPLOY_KEY'
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/publication-repo/publication-persister:latest'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/publication-repo/csv-producer:latest'

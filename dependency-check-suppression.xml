@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="jeremylong.github.io"
+              xsi:schemaLocation="jeremylong.github.io jeremylong.github.io"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <suppress until="2026-01-01Z">
+        <gav regex="true">io\.netty:netty-transport:4\.1\.119\.Final</gav>
+        <cve>CVE-2025-55163</cve>
+        <notes>Netty transport used internally by Kafka client only. No direct socket exposure; traffic restricted to internal VPC.</notes>
+    </suppress>
+</suppressions>

@@ -1,0 +1,132 @@
+{
+	"compiler": {
+		"version": "0.8.20+commit.a1b79de6"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "publicationId",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"name": "PublicationStored",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "publicationId",
+						"type": "string"
+					}
+				],
+				"name": "getRecord",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "timestamp",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "isHashStored",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "publicationId",
+						"type": "string"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "hash",
+						"type": "bytes32"
+					}
+				],
+				"name": "storeHash",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"PublicationRegistry.sol": "PublicationRegistryV2"
+		},
+		"evmVersion": "paris",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"PublicationRegistry.sol": {
+			"keccak256": "0xdce668c0f0ab6108f7bb4240edb9e0256180a073c616e50b9fe57bc61cc644a3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://4eee0884d5e8b07bd6d63ef76228bfda5a9eb76d5638fdc2e9ba86f129f16a1c",
+				"dweb:/ipfs/QmX1eGeEYURYkuynybgWi9G1of3CcaAn92WRZ7XTiks17W"
+			]
+		}
+	},
+	"version": 1
+}

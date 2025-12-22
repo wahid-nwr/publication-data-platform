@@ -1,0 +1,88 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "publicationId",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "hash",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "PublicationStored",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "publicationId",
+        "type": "string"
+      }
+    ],
+    "name": "getRecord",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "hash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "timestamp",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "hash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "isHashStored",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "publicationId",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "hash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "storeHash",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

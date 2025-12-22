@@ -1,0 +1,25 @@
+prometheus.scrape "publication_app" {
+  targets = [
+    { __address__ = "publication_app:9494" }
+  ]
+
+  scrape_interval = "5s"
+  scrape_timeout  = "3s"
+}
+
+prometheus.remote_write "grafana_cloud" {
+  endpoint {
+    url = "YOUR_REMOTE_WRITE_URL"
+
+    basic_auth {
+      username = "YOUR_GRAFANA_CLOUD_USERNAME"
+      password = "YOUR_GRAFANA_CLOUD_API_KEY"
+    }
+
+    //# Recommended by Grafana Cloud
+    send_exemplars = true
+  }
+
+  //# Send metrics from the scraper above
+  forwards = [prometheus.scrape.publication_app.receiver]
+}

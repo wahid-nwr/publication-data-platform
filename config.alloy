@@ -1,0 +1,249 @@
+// ----------------------------------------------------
+// 1. Discover Alloy’s own health metrics
+// ----------------------------------------------------
+prometheus.exporter.self "alloy_self" {}
+
+// Add labels like job, instance
+discovery.relabel "alloy_self" {
+  targets = prometheus.exporter.self.alloy_self.targets
+
+  rule {
+    target_label = "job"
+    replacement  = "alloy/self"
+  }
+  rule {
+    target_label = "instance"
+    replacement  = constants.hostname
+  }
+}
+
+// ----------------------------------------------------
+// 2. Scrape Alloy self metrics
+// ----------------------------------------------------
+prometheus.scrape "alloy_self" {
+  targets    = discovery.relabel.alloy_self.output
+  job_name   = "alloy/self"
+  forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+
+  scrape_interval = "60s"
+  scrape_timeout  = "10s"
+}
+
+// ----------------------------------------------------
+// 3. Scrape your application metrics
+// ----------------------------------------------------
+prometheus.scrape "publication_app" {
+  job_name = "publication-app"
+
+  targets = [
+            {
+            __address__ = "publication_app:9494",
+            },
+            ]
+  scrape_interval = "30s"
+  scrape_timeout  = "10s"
+  forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+}
+
+// ----------------------------------------------------
+// 4. Remote write to Grafana Cloud Metrics (Mimir)
+// ----------------------------------------------------
+prometheus.remote_write "grafana_cloud" {
+  endpoint {
+    url = "https://prometheus-prod-36-prod-us-west-0.grafana.net/api/prom/push"  // replace!
+
+    basic_auth {
+      username = "username usually a number"
+      password = "glc_..........."
+    }
+  }
+}
+
+// Loki docker setup, disabled for small vm
+discovery.docker "docker" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// add a relabel stage to keep only labeled targets
+discovery.relabel "publication_logs" {
+  targets = discovery.docker.docker.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_label_alloy_logs"]
+    regex         = "true"
+    action        = "keep"
+  }
+}
+
+loki.source.docker "app_logs" {
+  host   = "unix:///var/run/docker.sock"
+  targets = discovery.relabel.publication_logs.output
+
+  labels = {
+           job = "publication-app",
+           instance = constants.hostname,
+           }
+  //write_stderr = true
+  forward_to = [loki.write.grafanacloud_loki.receiver]
+}
+
+/*// OPTIONAL: parse JSON or modify logs
+loki.process "app_pipeline" {
+// Remove this if your logs are plain text
+  stage.json {
+    expressions = { level = "level", msg = "message" }
+  }
+
+  forward_to = [otelcol.processor.batch_logs.input]
+}
+
+otelcol.processor.batch "batch_logs" {
+  send_batch_size = 1000
+  timeout         = "5s"
+  send_batch_max_size = 0
+
+  output {
+    logs = [loki.write.grafanacloud_loki.receiver]
+  }
+}*/
+/*
+very heavy for vm to collect logs from all containers
+loki.source.docker "docker_logs" {
+  host   = "unix:///var/run/docker.sock"
+  targets = discovery.docker.docker.targets
+  labels = {
+           job = "docker",
+           instance = constants.hostname,
+           }
+  //write_stderr = true
+  forward_to = [loki.write.grafanacloud_loki.receiver]
+}*/
+
+loki.write "grafanacloud_loki" {
+  endpoint {
+    url = "https://logs-prod-021.grafana.net/loki/api/v1/push"
+    basic_auth {
+      username = "user"
+      password = "glc_.........................."
+    }
+  }
+}
+
+//loki.process "pipeline" {
+//  json {
+//    expressions = { level = "level" }
+//  }
+//
+//  batch {
+//    max_batch_size = 1000
+//    timeout        = "5s"
+//  }
+//
+//  forward_to = [loki.write.grafanacloud_loki.receiver]
+//}
+
+//-----------------------------------------------------------working configs before this--------------------------------------------------------
+//# Read logs from app containers -- this one is correct
+//loki.source.file "app_logs" {
+//    targets = [{path = "/app/logs/*.log",},]
+//    forward_to = [loki.write.grafanacloud_loki.receiver]
+//}
+
+// Opentelemetry with alloy otel config
+//otelcol.receiver.otlp "otlp_grpc" {
+//  grpc {
+//    endpoint = "0.0.0.0:4317"
+//  }
+//}
+
+//otelcol.processor.batch "batch" {}
+
+otelcol.receiver.otlp "otlp_receiver" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces = [otelcol.exporter.otlp.otlp_exporter.input,]
+    //logs   = [otelcol.exporter.otlp.otlp_logs_exporter.input]
+  }
+}
+
+otelcol.exporter.otlp "otlp_exporter" {
+  client {
+    endpoint = "https://tempo-prod-15-prod-us-west-0.grafana.net:443"
+    tls {
+      insecure_skip_verify = false
+    }
+    auth = otelcol.auth.basic.grafanacloud_tempo.handler
+  }
+}
+
+otelcol.auth.basic "grafanacloud_tempo" {
+  username = "username"
+  password = "glc_..................................."
+}
+
+//otelcol.service "service" {
+//  pipelines {
+//    traces {
+//      receivers  = [otelcol.receiver.otlp.otlp_receiver]
+//      exporters  = [otelcol.exporter.otlp.otlp_exporter]
+//    }
+//  }
+//}
+
+//otelcol.exporter.otlp "grafanacloud_tempo" {
+//  client {
+//    endpoint = "https://tempo-prod-15-prod-us-west-0.grafana.net/tempo"
+//    auth {
+//      basic {
+//        username = "username"
+//        password = "glc_............................."
+//      }
+//    }
+//  }
+//}
+
+//otelcol.service "tempo_pipeline" {
+//  pipelines {
+//    traces = {
+//      receivers  = [otelcol.receiver.otlp.otlp_grpc]
+//      processors = [otelcol.processor.batch.batch]
+//      exporters  = [otelcol.exporter.otlp.grafana_cloud_tempo]
+//    }
+//  }
+//}
+
+//loki.source.docker "docker_logs" {
+//  targets = [{url = "unix:///var/run/docker.sock"}]
+//  host = "unix:///var/run/docker.sock"
+//  forward_to = [loki.write.grafanacloud_loki.receiver]
+//}
+//
+//local.file_match "app_logs" {
+//  path_targets = [{__path__ = "/var/log/app/**/*.log",},]
+//}
+//
+//loki.source.file "app_logs" {
+//  targets    = local.file_match.app_logs.targets
+//  forward_to = [loki.write.grafanacloud_loki.receiver]
+//}
+
+
+//loki.source.file "log_scrape" {
+//  targets    = local.file_match.local_files.targets
+//  forward_to = [loki.write.grafana_cloud_loki.receiver]
+//}
+
+//loki.source.fileread "app_logs" {
+//  targets = local.file_match.app_logs.targets
+//  forward_to = [loki.write.grafana_cloud_loki.receiver]
+//}
+//
+//loki.source.journal "journal_logs" {
+//  forward_to = [loki.write.grafana_cloud_loki.receiver]
+//}

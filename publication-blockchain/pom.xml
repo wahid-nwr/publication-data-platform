@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.wahid.publication</groupId>
+        <artifactId>PublicationManagement</artifactId>
+        <version>1.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>publication-blockchain</artifactId>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <!-- Core Web3j -->
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+
+        <!-- Web3j Crypto (for keys, signing, hashing) -->
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>crypto</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+
+        <!-- Optional: ABI & Contract Utils -->
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>abi</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+
+        <!-- Optional: If you want to generate Java wrappers from Solidity -->
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>codegen</artifactId>
+            <version>5.0.1</version>
+        </dependency>
+    </dependencies>
+
+</project>

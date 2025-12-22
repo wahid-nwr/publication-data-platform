@@ -1,0 +1,14 @@
+{
+  "type": "record",
+  "name": "AuthorCreatedEvent",
+  "namespace": "com.publication.events",
+  "fields": [
+    { "name": "authorId", "type": "string" },
+    { "name": "email", "type": "string" },
+    { "name": "eventType", "type": "string" },
+    { "name": "firstName", "type": "string" },
+    { "name": "lastName", "type": "string" },
+    { "name": "occurredAt", "type": "double" },
+    { "name": "occurredAtLong", "type": "long", "default": 0 }
+  ]
+}
