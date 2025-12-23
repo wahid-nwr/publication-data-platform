@@ -24,7 +24,7 @@ Each ADR captures an important architectural decision, its context, rationale, a
 
 Module | ADR Path
 ------ | --------
-Cross-cutting | [`docs/adr/ADR-0001.md`](./ADR-001.md)
+Cross-cutting | [`docs/adr/ADR-0001.md`](./ADR-0001.md)
 publication-model | [`publication-model/docs/adr/ADR-0002.md`](../../publication-model/docs/adr/ADR-0002.md)
 csv-producer | [`csv-producer/docs/adr/ADR-0003.md`](../../csv-producer/docs/adr/ADR-0003.md)
 publication-persister | [`publication-persister/docs/adr/ADR-0004.md`](../../publication-persister/docs/adr/ADR-0004.md)
