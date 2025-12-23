@@ -12,10 +12,13 @@ The system ingests **large CSV datasets** (authors, books, magazines), processes
 
 The same Java codebase runs **locally, in Docker, and on Google Cloud Run** without modification.
 
+Take a look at the adr documents [here](./docs/adr/ADR-index.md)
+
 ---
 
 ## 🧱 Architecture
 
+[`Architecture`](./docs/architecture.md)
 ```text
                 ┌────────────────────┐
                 │   CSV Files        │
