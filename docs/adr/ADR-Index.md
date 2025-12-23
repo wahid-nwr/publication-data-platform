@@ -24,13 +24,13 @@ Each ADR captures an important architectural decision, its context, rationale, a
 
 Module | ADR Path
 ------ | --------
-Cross-cutting | `docs/adr/ADR-0001.md`
-publication-model | `publication-model/docs/adr/ADR-0002.md`
-csv-producer | `csv-producer/docs/adr/ADR-0003.md`
-publication-persister | `publication-persister/docs/adr/ADR-0004.md`
-kafka-services | `kafka-services/docs/adr/ADR-0005.md`
-publication-security | `publication-security/docs/adr/ADR-0006.md`
-publication-blockchain | `publication-blockchain/docs/adr/ADR-0007.md`
+Cross-cutting | [`docs/adr/ADR-0001.md`](./ADR-001.md)
+publication-model | [`publication-model/docs/adr/ADR-0002.md`](../../publication-model/docs/adr/ADR-0002.md)
+csv-producer | [`csv-producer/docs/adr/ADR-0003.md`](../../csv-producer/docs/adr/ADR-0003.md)
+publication-persister | [`publication-persister/docs/adr/ADR-0004.md`](../../publication-persister/docs/adr/ADR-0004.md)
+kafka-services | [`kafka-services/docs/adr/ADR-0005.md`](../../kafka-services/docs/adr/ADR-0005.md)
+publication-security | [`publication-security/docs/adr/ADR-0006.md`](../../publication-security/docs/adr/ADR-0006.md)
+publication-blockchain | [`publication-blockchain/docs/adr/ADR-0007.md`](../../publication-blockchain/docs/adr/ADR-0007.md)
 
 ---
 
