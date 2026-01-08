@@ -16,37 +16,16 @@ Take a look at the adr documents [here](./docs/adr/ADR-Index.md)
 
 ---
 
-## 🧱 Architecture
+## Architecture Overview
 
-[`Architecture`](./docs/architecture.md)
-```text
-                ┌────────────────────┐
-                │   CSV Files        │
-                │ (Authors, Books,   │
-                │  Magazines)        │
-                └─────────┬──────────┘
-                          │
-                          ▼
-                ┌────────────────────┐
-                │ CSV Parser (DTO)   │
-                │ OpenCSV            │
-                └─────────┬──────────┘
-                          │
-                          ▼
-                ┌────────────────────┐
-                │ Batch Processor    │
-                │ (Streaming / MT)   │
-                └─────────┬──────────┘
-                          │
-        ┌─────────────────┼─────────────────┐
-        ▼                 ▼                 ▼
-┌──────────────┐  ┌────────────────┐  ┌──────────────────┐
-│ Database     │  │ Kafka / Events │  │ Blockchain Hash  │
-│ (JPA)        │  │ (Confluent)    │  │ (Sepolia / EVM)  │
-└──────────────┘  └────────────────┘  └──────────────────┘
-                          │
-                          ▼
-                ┌────────────────────┐
-                │ Cloud Run Service  │
-                │ (Secure, Scalable) │
-                └────────────────────┘
+The platform is designed as a cloud-native, event-driven ingestion system with built-in data integrity verification using blockchain.
+
+At a high level:
+- Users authenticate via Firebase Authentication
+- A web application initiates CSV parsing jobs
+- Parsing and persistence are decoupled using Kafka
+- Normalized data is stored in PostgreSQL
+- A cryptographic dataset hash is written to Ethereum to guarantee immutability
+- Verification can be performed independently by recomputing and comparing hashes
+
+![Architecture Diagram](docs/architecture/publication-flow-diagram.png)
