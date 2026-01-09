@@ -29,3 +29,21 @@ At a high level:
 - Verification can be performed independently by recomputing and comparing hashes
 
 ![Architecture Diagram](docs/architecture/publication-flow-diagram.png)
+
+### Diagram Source
+
+The original diagram file (`.drawio`) is in the `docs/architecture/` folder. You can open it in **app.diagrams.net** to explore or modify it.
+
+| Component   | Tech             |
+| ----------- |------------------|
+| Auth        | Firebase         |
+| Compute     | GCP Cloud Run    |
+| Messaging   | Confluent Kafka  |
+| Persistence | PostgreSQL       |
+| Blockchain  | Ethereum Sepolia |
+
+
+For detailed architecture discussion:
+- Designing a Hybrid GCP Architecture — Medium Part 1 :contentReference[oaicite:3]{index=3}
+- Event-Driven Ingestion with Kafka — Medium Part 2 :contentReference[oaicite:4]{index=4}
+- Making Data Immutable with Blockchain — Medium Part 3 :contentReference[oaicite:5]{index=5}
