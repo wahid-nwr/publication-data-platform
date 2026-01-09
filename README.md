@@ -44,6 +44,6 @@ The original diagram file (`.drawio`) is in the `docs/architecture/` folder. You
 
 
 For detailed architecture discussion:
-- Designing a Hybrid GCP Architecture — Medium Part 1 :contentReference[oaicite:3]{index=3}
-- Event-Driven Ingestion with Kafka — Medium Part 2 :contentReference[oaicite:4]{index=4}
-- Making Data Immutable with Blockchain — Medium Part 3 :contentReference[oaicite:5]{index=5}
+- [Designing a Hybrid GCP Architecture — Medium Part 1](https://medium.com/@anwar.wahid.1686/designing-a-hybrid-gcp-architecture-with-cloud-run-vms-and-managed-services-c7e225da28ae)
+- [Event-Driven Ingestion with Kafka — Medium Part 2](https://medium.com/@anwar.wahid.1686/event-driven-ingestion-with-kafka-and-schema-registry-in-a-java-data-platform-c0ab1818aed3)
+- [Making Data Immutable with Blockchain — Medium Part 3](https://medium.com/@anwar.wahid.1686/making-data-immutable-integrating-blockchain-into-a-java-publication-management-platform-1bc3a1afdf13)
