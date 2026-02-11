@@ -25,7 +25,7 @@ resource "google_cloud_run_v2_service" "csv_persister" {
       }
     }
     containers {
-      image = "us-central1-docker.pkg.dev/alert-cursor-476219-s1/publication-repo/publication-persister@sha256:5b510f069d5a6a4f9f56e15419b5959bd3c1543e6b4fc4f9792a4b990469f2f9"
+      image = "us-central1-docker.pkg.dev/alert-cursor-476219-s1/publication-repo/publication-persister@sha256:6e3a016ba250bde9cbacf61a6352f9777364a9997fcdbe301aaac762d85e042c"
       volume_mounts {
         name       = "firebase-secret"
         mount_path = "/run/secrets"
