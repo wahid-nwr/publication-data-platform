@@ -55,7 +55,7 @@ public class CsvUtil {
                     }
                     total += chunk.size();
                 }
-                System.out.println("total from csv " + filePath + ":" + total);
+                .git
             }
         }
     }

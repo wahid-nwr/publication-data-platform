@@ -13,7 +13,7 @@ resource "google_cloud_run_v2_service" "csv_producer" {
       max_instance_count = 1
     }
     containers {
-      image = "us-central1-docker.pkg.dev/alert-cursor-476219-s1/publication-repo/csv-producer@sha256:423291011936dc1bc368f83ac09683901cb2716d058e2f58bcb634aab28981a1"
+      image = "us-central1-docker.pkg.dev/alert-cursor-476219-s1/publication-repo/csv-producer@sha256:aba79167d4bee5fb5c3df43ea4a662648df19b3556a31762ab3d1ba3d248c4a1"
       # --------------------------------------
       # Environment variables for your app
       # --------------------------------------

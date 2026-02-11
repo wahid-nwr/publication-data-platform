@@ -76,7 +76,7 @@ services:
       - /home/deploy/publication_data:/csv/data:ro
       - logs_data:/producer/logs
   app:
-    image: us-central1-docker.pkg.dev/alert-cursor-476219-s1/publication-repo/publication-common:latest
+    image: us-central1-docker.pkg.dev/alert-cursor-476219-s1/publication-repo/publication-persister:latest
     ports:
       - target: 8081
         published: 8081
