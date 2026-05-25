@@ -1,6 +1,8 @@
 package io.wahid.publication.controller;
 
+import io.wahid.publication.CsvMain;
 import io.wahid.publication.exception.BatchProcessingException;
+import io.wahid.publication.service.CsvInputStreamProvider;
 import io.wahid.publication.util.*;
 import io.wahid.publication.service.CsvProcessor;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
@@ -49,6 +52,7 @@ public class CsvParserServlet extends HttpServlet {
 
             case "POST":
                 if ("/csv/parser/initiate".equals(path)) {
+                    LOGGER.log(Level.INFO, "Initiating parse job!");
                     runCsvJob(resp);
                 }
                 break;
@@ -60,24 +64,25 @@ public class CsvParserServlet extends HttpServlet {
 
     private void getJobStatus(HttpServletResponse resp, String jobId) throws IOException {
         if (JobRegistry.get(jobId) != null) {
-            System.out.println("CSV job status->" + JobRegistry.get(jobId));
             Map<String, String> status = Map.of("jobId", jobId,
                     "status", JobRegistry.get(jobId).name(),
                     "jobType", JobType.PARSER.name());
             resp.getWriter().write(JsonUtil.toJson(status));
         } else {
-            System.out.println("No job found with id -> " + jobId);
+            LOGGER.log(Level.INFO,"No job found with id -> {0}", jobId);
             resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
     }
 
     private void runCsvJob(HttpServletResponse resp) throws IOException {
         String jobId = UUID.randomUUID().toString();
+        LOGGER.log(Level.INFO,"Creating CSV parsing job: {0}", jobId);
         JobRegistry.create(jobId);
         PublicationServiceExecutor.submit(() -> {
             Instant start = Instant.now();
             try {
                 LOGGER.log(Level.INFO,"Starting CSV parsing job: {0}", jobId);
+                fileRead();
                 JobRegistry.update(jobId, JobStatus.RUNNING);
                 new CsvProcessor().startParsingCsv();
                 Instant end = Instant.now();
@@ -92,6 +97,7 @@ public class CsvParserServlet extends HttpServlet {
                     Thread.sleep(3000);
                     JobRegistry.update(jobId, JobStatus.IDLE);
                 } catch (InterruptedException e) {
+                    LOGGER.log(Level.SEVERE, "Job Closing error:" + jobId, e);
                     throw new RuntimeException(e);
                 }
             }
@@ -106,5 +112,18 @@ public class CsvParserServlet extends HttpServlet {
     private void setJsonContentType(HttpServletResponse resp) {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
+    }
+
+    private void fileRead() {
+        String path = "data/autoren.csv";
+        try (InputStream is = CsvMain.class.getClassLoader().getResourceAsStream(path)) {
+            if (is == null) {
+                throw new IOException("From servlet Classpath resource not found: " + path);
+            } else {
+                System.out.println("input length -> " + is.available());
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE,"Classpath resource not found: {0}", path);
+        }
     }
 }

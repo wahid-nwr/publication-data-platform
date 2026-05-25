@@ -16,8 +16,10 @@ public class FirebaseInit {
         try {
             System.out.println(System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));
             GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
+            System.out.println(credentials.getClass().getName());
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(credentials)
+                    .setProjectId("alert-cursor-476219-s1")
                     .build();
 
             FirebaseApp.initializeApp(options);

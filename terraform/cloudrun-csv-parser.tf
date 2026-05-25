@@ -12,11 +12,31 @@ resource "google_cloud_run_v2_service" "csv_producer" {
       min_instance_count = 0
       max_instance_count = 1
     }
+#     volumes {
+#       name = "firebase-secret"
+#
+#       secret {
+#         secret = google_secret_manager_secret.firebase_sa.secret_id
+#
+#         items {
+#           path    = "firebase"
+#           version = "latest"
+#         }
+#       }
+#     }
     containers {
-      image = "us-central1-docker.pkg.dev/alert-cursor-476219-s1/publication-repo/csv-producer@sha256:aba79167d4bee5fb5c3df43ea4a662648df19b3556a31762ab3d1ba3d248c4a1"
+      image = "us-central1-docker.pkg.dev/alert-cursor-476219-s1/publication-repo/csv-producer@sha256:72d4fa2481137a07af538497d2f41cf315b5d03ecb60700746f4d81b578322ec"
+#       volume_mounts {
+#         name       = "firebase-secret"
+#         mount_path = "/run/secrets"
+#       }
       # --------------------------------------
       # Environment variables for your app
       # --------------------------------------
+#       env {
+#         name  = "GOOGLE_APPLICATION_CREDENTIALS"
+#         value = "/run/secrets/firebase"
+#       }
       env {
         name = "SEPOLIA_RPC_URL"
         value_source {

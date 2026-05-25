@@ -23,7 +23,7 @@ public class JwtFilter implements Filter {
     private static final Set<String> ALLOWED_ORIGINS = Set.of(
             "http://localhost:8080",
             "http://127.0.0.1:8080",
-            "http://34.59.213.229:8080",
+            "http://34.55.39.47:8080",
             "https://csv-persister-652346505611.us-central1.run.app"
     );
 
@@ -43,11 +43,11 @@ public class JwtFilter implements Filter {
 
     public static void sendCorsHeaders(HttpServletRequest req, HttpServletResponse resp) {
         String origin = req.getHeader("Origin");
+        LOGGER.log(Level.INFO, "request origin-> {0}", origin);
         if (origin != null) {
             origin = origin.replaceAll("/$", "");
         }
 
-        LOGGER.log(Level.INFO, "request origin-> {0}", origin);
         if (origin != null) {
             LOGGER.log(Level.INFO, "matched->> {0}", ALLOWED_ORIGINS.contains(origin));
         }
@@ -85,11 +85,13 @@ public class JwtFilter implements Filter {
         // protected routes (all other routes)
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            LOGGER.log(Level.INFO,"Invalid auth header {0}", authHeader);
             unauthorized(request, response, "Missing Authorization header");
             return;
         }
 
         if (TokenVerifier.verify(authHeader) == null) {
+            LOGGER.log(Level.INFO,"Invalid token {0}", authHeader);
             unauthorized(request, response, "Invalid token");
             return;
         }

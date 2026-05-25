@@ -1,5 +1,6 @@
 package io.wahid.publication.service;
 
+import io.wahid.publication.controller.CsvParserServlet;
 import io.wahid.publication.dto.AuthorDto;
 import io.wahid.publication.dto.BookDto;
 import io.wahid.publication.dto.MagazineDto;
@@ -19,31 +20,39 @@ import io.wahid.publication.CsvMain;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static io.wahid.publication.KafkaConstants.*;
 
 public class CsvProcessor {
+    private static final Logger LOGGER = Logger.getLogger(CsvProcessor.class.getName());
     private static final boolean LOAD_FILE_FROM_VOLUME = CsvMain.FILE_SOURCE_VOLUME != null && CsvMain.FILE_SOURCE_VOLUME.equals("true");
 
     public void startParsingCsv() {
+        LOGGER.log(Level.INFO, "Started parse job!");
         parseAuthorCsv();
         parseBookCsv();
         parseMagazineCsv();
     }
 
     private void parseAuthorCsv() {
+        LOGGER.log(Level.INFO, "Starting parse author!");
         String csvPath = System.getenv().getOrDefault("AUTHOR_CSV_PATH", "data/autoren.csv");
         String charset = System.getenv().getOrDefault("AUTHOR_CSV_CHARSET", "ISO_8859_1");
         try (InputStream in = CsvInputStreamProvider.open(csvPath, LOAD_FILE_FROM_VOLUME)) {
             CsvToDtoProducer<AuthorDto, Author, AuthorCreatedEvent> authorProducer = new CsvToDtoProducer<>(BOOTSTRAP_SERVER, AUTHOR_CREATED_TOPIC);
             authorProducer.parseCsv(csvPath, Charset.forName(charset), AuthorDto.class, in, null, new AuthorMapper());
             authorProducer.close();
+            LOGGER.log(Level.INFO, "Closing parse author!");
         } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Exception occurred parsing author ->", e);
             throw new BatchProcessingException(e.getMessage(), e);
         }
     }
 
     private void parseBookCsv() {
+        LOGGER.log(Level.INFO, "Starting parse book!");
         String csvPath = System.getenv().getOrDefault("BOOK_CSV_PATH", "data/buecher.csv");
         String charset = System.getenv().getOrDefault("BOOK_CSV_CHARSET", "windows-1252");
         try (InputStream in = CsvInputStreamProvider.open(csvPath, LOAD_FILE_FROM_VOLUME)) {
@@ -52,12 +61,15 @@ public class CsvProcessor {
             BookMapper bookMapper = new BookMapper(new AuthorRepository(JpaUtil.getEntityManagerFactory()));
             publicationProducer.parseCsv(csvPath, Charset.forName(charset), BookDto.class, in, null, bookMapper);
             publicationProducer.close();
+            LOGGER.log(Level.INFO, "Closing parse book!");
         } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Exception occurred parsing book ->", e);
             throw new BatchProcessingException(e);
         }
     }
 
     private void parseMagazineCsv() {
+        LOGGER.log(Level.INFO, "Starting parse magazine!");
         String csvPath = System.getenv().getOrDefault("MAGAZINE_CSV_PATH", "data/zeitschriften.csv");
         String charset = System.getenv().getOrDefault("MAGAZINE_CSV_CHARSET", "ISO_8859_1");
         try (InputStream in = CsvInputStreamProvider.open(csvPath, LOAD_FILE_FROM_VOLUME)) {
@@ -67,7 +79,9 @@ public class CsvProcessor {
             MagazineMapper magazineMapper = new MagazineMapper(new AuthorRepository(JpaUtil.getEntityManagerFactory()));
             publicationProducer.parseCsv(csvPath, Charset.forName(charset), MagazineDto.class, in, null, magazineMapper);
             publicationProducer.close();
+            LOGGER.log(Level.INFO, "Closing parse magazine!");
         } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Exception occurred parsing magazine ->", e);
             throw new BatchProcessingException(e);
         }
     }
