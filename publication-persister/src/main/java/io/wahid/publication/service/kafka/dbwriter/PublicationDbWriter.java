@@ -9,6 +9,7 @@ import io.wahid.publication.model.PublicationModel;
 import io.wahid.publication.model.events.TYPE;
 import io.wahid.publication.model.web3.PublicationTransaction;
 import io.wahid.publication.repository.PublicationRepository;
+import io.wahid.publication.repository.PublicationTransactionRepository;
 import io.wahid.publication.util.JpaUtil;
 import io.wahid.publication.util.KafkaUtil;
 import com.publication.events.PublicationReadyEvent;
@@ -42,10 +43,12 @@ public class PublicationDbWriter {
     private final EntityManagerFactory emf;
     private final PublicationRepository repo;
     private final BlockchainService blockchainService;
+    private final PublicationTransactionRepository transactionRepository;
 
     public PublicationDbWriter() throws Exception {
         this.emf = JpaUtil.getEntityManagerFactory();
         this.repo = new PublicationRepository(emf);
+        this.transactionRepository = new PublicationTransactionRepository(emf);
         BlockchainClient blockchainClient = new BlockchainClient();
         this.blockchainService = new BlockchainService(blockchainClient);
     }
@@ -112,9 +115,12 @@ public class PublicationDbWriter {
                 }
                 LOGGER.log(Level.INFO, "publication to persist -> {0}", publicationModel);
                 em.persist(publicationModel);
-                PublicationTransaction publicationTransaction = publishHash(publicationModel);
-                if (publicationTransaction != null) {
-                    em.persist(publicationTransaction);
+
+                if (transactionRepository.isbnNotExists(publicationModel.getIsbn())) {
+                    PublicationTransaction publicationTransaction = publishHash(publicationModel);
+                    if (publicationTransaction != null) {
+                        em.persist(publicationTransaction);
+                    }
                 }
             }
             tx.commit();

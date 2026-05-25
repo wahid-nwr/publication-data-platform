@@ -55,7 +55,6 @@ public class CsvUtil {
                     }
                     total += chunk.size();
                 }
-                .git
             }
         }
     }
